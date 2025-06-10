@@ -1,0 +1,167 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "MagicBell API",
+    "description": "OpenAPI 3.1.0 Specification for MagicBell API.",
+    "contact": {
+      "name": "MagicBell",
+      "url": "https://magicbell.com",
+      "email": "hello@magicbell.com"
+    },
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.magicbell.com/v2",
+      "description": "MagicBell REST API Base URL"
+    }
+  ],
+  "paths": {
+    "/test-a": {
+      "get": {
+        "tags": [
+          "A"
+        ],
+        "description": "Get a test resource",
+        "operationId": "fetch_test_resource",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestResourceA"
+                }
+              }
+            }
+          }
+        },
+        "x-meta": 2
+      },
+      "put": {
+        "tags": [
+          "A"
+        ],
+        "description": "Create a test resource",
+        "operationId": "create_test_resource",
+        "parameters": [
+          {
+            "name": "x",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestResourceA"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestResourceA"
+                }
+              }
+            }
+          }
+        },
+        "x-meta": 1
+      }
+    },
+    "/test-b": {
+      "get": {
+        "tags": [
+          "B"
+        ],
+        "description": "Get a test resource B",
+        "operationId": "fetch_test_resource_b",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestResourceB"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TestResourceA": {
+        "examples": [
+          {
+            "x": "example",
+            "y": {
+              "y": "example"
+            }
+          }
+        ],
+        "properties": {
+          "x": {
+            "type": "string"
+          },
+          "y": {
+            "$ref": "#/components/schemas/TestResourceB"
+          }
+        },
+        "type": "object"
+      },
+      "TestResourceB": {
+        "examples": [
+          {
+            "y": "example"
+          }
+        ],
+        "properties": {
+          "y": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "A"
+    },
+    {
+      "name": "B"
+    }
+  ]
+}
