@@ -3,7 +3,7 @@
 Mason is an API framework for writing HTTP handlers with Input/Output models described by JSON schema.
 It was created to serve the API (v2) at [MagicBell](https://www.magicbell.com), and guided by the following design goals:
 
-- **JSON schema first** - The Input/Output models are described by JSON schema, with an example. By implementing the `model.Entity` interface I/O model definition is tested against the schema so they are never out of sync.
+- **JSON schema first** - The Input/Output models are described by JSON schema, with an example. By implementing the `model.Entity` interface, the model definition is tested against the schema so they are never out of sync.
 - **Incremental adoption** - Mason should be easy to add to an existing project, by giving it a `mason.Runtime` implementation that can `Handle` the `Operation` created by Mason, and `Respond` to a HTTP request.
 - **Support Resource grouping & querying** - REST API resources and endpoints are a map to an API/product's feature offerings. For example `/integrations/slack`, and `/integrations/web_push` are two different resources, but to get all `integration` resources, the integration `RouteGroup` comes in handy.
 
