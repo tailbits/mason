@@ -31,22 +31,6 @@ func NewAPI(runtime Runtime) *API {
 	}
 }
 
-func (a *API) registerOp(m Operation, group string) {
-	path := m.Path
-	method := m.Method
-
-	if grp, ok := (*&a.registry)[group]; ok {
-		grp[toKey(method, path)] = m
-
-		return
-	}
-
-	rsc := Resource{
-		toKey(method, path): m,
-	}
-	(a.registry)[group] = rsc
-}
-
 func (a *API) NewRouteGroup(name string) *RouteGroup {
 	return &RouteGroup{
 		rtm:  a,

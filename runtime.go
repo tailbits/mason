@@ -26,11 +26,11 @@ type Runtime interface {
 var _ Runtime = (*HTTPRuntime)(nil)
 
 type HTTPRuntime struct {
-	mux *http.ServeMux
+	*http.ServeMux
 }
 
 func (r *HTTPRuntime) Handle(method string, path string, handler WebHandler, mws ...func(WebHandler) WebHandler) {
-	r.mux.HandleFunc(fmt.Sprintf("%s %s", method, path), func(w http.ResponseWriter, req *http.Request) {
+	r.HandleFunc(fmt.Sprintf("%s %s", method, path), func(w http.ResponseWriter, req *http.Request) {
 		if req.Method != method {
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 			return
@@ -59,6 +59,6 @@ func (r *HTTPRuntime) Respond(ctx context.Context, w http.ResponseWriter, data a
 
 func NewHTTPRuntime() *HTTPRuntime {
 	return &HTTPRuntime{
-		mux: http.NewServeMux(),
+		ServeMux: http.NewServeMux(),
 	}
 }

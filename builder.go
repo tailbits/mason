@@ -297,7 +297,8 @@ func (rb *RouteBuilderNoBody[T, Q]) Register(api *API) {
 		registerResponseEntity[T, Q](
 			api,
 			rb.method,
-			rb.group, rb.path,
+			rb.group,
+			rb.path,
 			WithOperationID(rb.opID),
 			WithSuccessCode((rb.successCode)),
 			WithDescription(rb.desc),
