@@ -268,7 +268,7 @@ func TestOpenAPIGen(t *testing.T) {
 			gen, err := openapi.NewGenerator(api, openapi.Validate(false))
 			assert.NilError(t, err, "failed to create OpenAPI generator")
 
-			schema, err := gen.ToSchema()
+			schema, err := gen.Schema()
 
 			tc.expectedOutcome.Assert(t, schema, err)
 		})

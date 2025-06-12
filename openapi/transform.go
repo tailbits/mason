@@ -17,7 +17,7 @@ var email string = "hello@example.com"
 var serverDescription string = "Example API Base URL"
 var serverURL string = "https://api.example.com"
 
-func (g *Generator) ToSchema() ([]byte, error) {
+func (g *Generator) Schema() ([]byte, error) {
 	if err := g.ingest(g.records); err != nil {
 		return nil, fmt.Errorf("failed to ingest records: %w", err)
 	}
