@@ -49,7 +49,7 @@ func (c *ContextWrapper) from(record Record) error {
 	c.WithID(record.ID)
 	c.WithTags(record.Tags...)
 	for _, tag := range record.Tags {
-		c.reflector.allTags[tag] = true
+		c.reflector.tags[tag] = true
 	}
 	c.SetDescription(record.Description)
 

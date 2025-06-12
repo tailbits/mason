@@ -11,10 +11,11 @@ import (
 const prefix string = "v2"
 const version string = "2.0.0"
 
-var name string = "MagicBell"
-var url string = "https://magicbell.com"
-var email string = "hello@magicbell.com"
-var serverDescription string = "MagicBell REST API Base URL"
+var name string = "Example"
+var url string = "https://example.com"
+var email string = "hello@example.com"
+var serverDescription string = "Example API Base URL"
+var serverURL string = "https://api.example.com"
 
 func (g *Generator) ToSchema() ([]byte, error) {
 	if err := g.ingest(g.records); err != nil {
@@ -22,11 +23,11 @@ func (g *Generator) ToSchema() ([]byte, error) {
 	}
 
 	collectedTags := []string{}
-	for tag := range g.allTags {
+	for tag := range g.tags {
 		collectedTags = append(collectedTags, tag)
 	}
 	for _, inferredTag := range g.config.allTags {
-		if _, ok := g.allTags[inferredTag]; !ok {
+		if _, ok := g.tags[inferredTag]; !ok {
 			collectedTags = append(collectedTags, inferredTag)
 		}
 	}
@@ -57,15 +58,14 @@ func newReflector() *Reflector {
 		WithDescription("OpenAPI 3.1.0 Specification for MagicBell API.").
 		WithContact(openapi31.Contact{Name: &name, Email: &email, URL: &url})
 	reflector.Spec.WithServers(openapi31.Server{
-		URL:         "https://api.magicbell.com/" + prefix,
-		Description: &serverDescription,
+		URL: serverURL,
 	})
 
 	reflector.Reflector.DefaultOptions = append(reflector.Reflector.DefaultOptions, jsonschema.DefinitionsPrefix("#/components/schemas/"))
 
 	return &Reflector{
 		Reflector: reflector,
-		allDefs:   make(definitionsMap),
-		allTags:   make(map[string]bool),
+		defs:      make(definitionsMap),
+		tags:      make(map[string]bool),
 	}
 }

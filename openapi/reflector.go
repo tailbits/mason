@@ -19,8 +19,8 @@ type definitionsMap map[string]jsonschema.Schema
 
 type Reflector struct {
 	*openapi31.Reflector
-	allDefs definitionsMap
-	allTags map[string]bool
+	defs definitionsMap
+	tags map[string]bool
 }
 
 func (r *Reflector) ingest(records []Record) error {
@@ -101,7 +101,7 @@ func (r *Reflector) marshalJSON() ([]byte, error) {
 func (r *Reflector) collectDefinitions() error {
 	// First, check for case-insensitive duplicates.
 	seen := make(map[string]string) // map normalized key -> original key
-	for defName := range r.allDefs {
+	for defName := range r.defs {
 		normalized := strings.ToLower(defName)
 		if orig, exists := seen[normalized]; exists {
 			return fmt.Errorf("conflicting definitions: %q and %q", orig, defName)
@@ -109,7 +109,7 @@ func (r *Reflector) collectDefinitions() error {
 		seen[normalized] = defName
 	}
 
-	for defName, def := range r.allDefs {
+	for defName, def := range r.defs {
 		if r.Reflector.Spec.Components == nil {
 			return nil
 		}
@@ -156,7 +156,7 @@ func (r *Reflector) addDefinition(name string, schema jsonschema.Schema) error {
 		return fmt.Errorf("definition name cannot be empty")
 	}
 
-	if existingDef, ok := r.allDefs[name]; ok {
+	if existingDef, ok := r.defs[name]; ok {
 		if !isSchemaIdentical(existingDef, schema) {
 			return fmt.Errorf("definition with name [%s] already exists but with a different definition", name)
 		}
@@ -164,7 +164,7 @@ func (r *Reflector) addDefinition(name string, schema jsonschema.Schema) error {
 			return nil
 		}
 	}
-	r.allDefs[name] = schema
+	r.defs[name] = schema
 
 	for nestedName, def := range schema.Definitions {
 		if def.TypeObject != nil {

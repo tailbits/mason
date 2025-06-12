@@ -50,7 +50,7 @@ func (e ExpectSuccess) Assert(t *testing.T, schema []byte, err error) {
 		t.Fatalf("error reading expected file: %v", err)
 	}
 
-	if os.Getenv("UPDATE_API_SNAPSHOT") == "true" {
+	if os.Getenv("UPDATE_SCHEMA_SNAPSHOT") == "true" {
 		if err := os.WriteFile(e.expectedFile, formatted, 0644); err != nil {
 			t.Fatalf("error writing expected file: %v", err)
 		}
@@ -58,7 +58,7 @@ func (e ExpectSuccess) Assert(t *testing.T, schema []byte, err error) {
 		return
 	}
 
-	assert.Equal(t, string(expected), string(formatted), "schema does not match snapshot - run with UPDATE_API_SNAPSHOT=true to update")
+	assert.Equal(t, string(expected), string(formatted), "schema does not match snapshot - run with UPDATE_SCHEMA_SNAPSHOT=true to update")
 }
 
 // ExpectError asserts that OpenAPI generation fails with a specific error message
