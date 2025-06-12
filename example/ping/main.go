@@ -95,7 +95,8 @@ func main() {
 		Addr:    ":9090",
 		Handler: rtm,
 	}
-	fmt.Println("listening on http://localhost:9090")
+	fmt.Println("API URL      : http://localhost:9090")
+	fmt.Println("OpenAPI spec : http://localhost:9090/openapi.json")
 	if err := server.ListenAndServe(); err != nil {
 		panic(err)
 	}
