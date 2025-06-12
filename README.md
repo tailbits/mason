@@ -89,7 +89,7 @@ Register the Handler
 		WithDesc("Ping the server when you are unsure of the time"))
 ```
 
-You can try this example by running `example/ping/main.go`. The example also mounts a handler to serve the OpenAPI file.
+You can try this example by running [example/ping/main.go](/example/ping/main.go). The example also mounts a handler to serve the OpenAPI file.
 
 ```go
 	gen, err := openapi.NewGenerator(api)
