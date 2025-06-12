@@ -37,10 +37,7 @@ func (m *MockBuilder) WithGroup(path string) mason.Builder {
 	return m
 }
 
-func (m *MockBuilder) Register(api *mason.API) {
-	// Mock implementation
-
-}
+func (m *MockBuilder) Register(api *mason.API) {}
 
 func TestGroup_New(t *testing.T) {
 	entity := &MockEntity{

@@ -2,62 +2,9 @@ package mason
 
 import (
 	"strings"
-
-	"github.com/magicbell/mason/model"
 )
 
-func (a *API) registerEntity(entity model.Entity) {
-	a.entities[entity.Name()] = entity
-}
-
-func (a *API) GetEntity(name string) (model.Entity, bool) {
-	e, ok := a.entities[name]
-
-	return e, ok
-}
-
-func registerModel[I, O model.Entity, Q any](api *API, method string, group string, path string, opts ...Option) {
-	i := model.New[I]()
-	o := model.New[O]()
-	q := model.New[Q]()
-
-	m := Operation{
-		Method:      method,
-		Path:        path,
-		Input:       i,
-		Output:      o,
-		QueryParams: q,
-	}
-
-	for _, opt := range opts {
-		opt(&m)
-	}
-
-	api.registerEntity(i)
-	api.registerEntity(o)
-
-	api.registerOp(m, group)
-}
-
-func registerResponseEntity[O model.Entity, Q any](api *API, method string, group string, path string, opts ...Option) {
-	o := model.New[O]()
-	q := model.New[Q]()
-
-	m := Operation{
-		Method:      method,
-		Path:        path,
-		Output:      o,
-		QueryParams: q,
-	}
-
-	for _, opt := range opts {
-		opt(&m)
-	}
-
-	api.registerEntity(o)
-
-	api.registerOp(m, group)
-}
+type Registry map[string]Resource
 
 func (a *API) Registry() Registry {
 	return a.registry
@@ -65,13 +12,6 @@ func (a *API) Registry() Registry {
 
 func (a *API) Operations() []Operation {
 	return a.registry.Ops()
-}
-
-func (a *API) Routes() []string {
-	return a.registry.Endpoints(func(key string) string {
-		_, path := fromKey(key)
-		return path
-	})
 }
 
 func (a *API) GetOperation(method string, path string) (Operation, bool) {
@@ -93,4 +33,73 @@ func fromKey(key string) (method string, path string) {
 		return "", ""
 	}
 	return split[0], split[1]
+}
+
+// TaggedOps returns all models that have all the tags provided
+func (mgm *Registry) TaggedOps(tags ...string) []Operation {
+	models := make([]Operation, 0, len(*mgm)*2)
+
+	for _, grp := range *mgm {
+		for _, model := range grp {
+			if len(model.Tags) < len(tags) {
+				continue
+			}
+
+			hasAllTags := true
+			for _, requiredTag := range tags {
+				found := false
+				for _, modelTag := range model.Tags {
+					if modelTag == requiredTag {
+						found = true
+						break
+					}
+				}
+				if !found {
+					hasAllTags = false
+					break
+				}
+			}
+
+			if hasAllTags {
+				models = append(models, model)
+			}
+		}
+	}
+	return models
+}
+
+func (mgm *Registry) FindOp(method string, path string) (Operation, bool) {
+	for _, modelGroup := range *mgm {
+		if model, ok := modelGroup[toKey(method, path)]; ok {
+			return model, true
+		}
+	}
+	return Operation{}, false
+}
+
+func (mgm *Registry) Ops() []Operation {
+	var models []Operation
+	for _, modelGroup := range *mgm {
+		for _, model := range modelGroup {
+			models = append(models, model)
+		}
+	}
+	return models
+}
+
+func (mgm *Registry) Endpoints(transform func(string) string) []string {
+	unique := make(map[string]bool)
+
+	for _, modelGroup := range *mgm {
+		for key := range modelGroup {
+			unique[transform(key)] = true
+		}
+	}
+
+	keys := make([]string, 0, len(unique))
+	for key := range unique {
+		keys = append(keys, key)
+	}
+
+	return keys
 }

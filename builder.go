@@ -9,9 +9,7 @@ import (
 	m "github.com/magicbell/mason/model"
 )
 
-var mock = false
-
-var successResponseMap = map[string]int{
+var successCodes = map[string]int{
 	http.MethodPost:   http.StatusCreated,
 	http.MethodPut:    http.StatusOK,
 	http.MethodPatch:  http.StatusCreated,
@@ -61,11 +59,6 @@ func (rb *RouteBuilderBase) validate() error {
 		return fmt.Errorf("path is required")
 	}
 	return nil
-}
-
-// SetMocked ensures that all routes are registered with mocked handler implementations.
-func SetMocked(m bool) {
-	mock = m
 }
 
 type RouteBuilderWithBody[T m.Entity, O m.Entity, Q any] struct {
@@ -323,7 +316,7 @@ func DefaultSuccessCode(method string, output m.WithSchema) int {
 	if _, ok := any(output).(m.Nil); ok {
 		return http.StatusNoContent
 	}
-	return successResponseMap[method]
+	return successCodes[method]
 }
 
 func RecursivelyUnwrap(current m.WithSchema) m.WithSchema {

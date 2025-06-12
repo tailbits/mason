@@ -11,9 +11,7 @@ import (
 	"github.com/magicbell/mason/model"
 )
 
-type decodeOptions struct {
-	wrappingKey *string
-}
+type decodeOptions struct{}
 
 type DecodeOption func(options *decodeOptions) error
 
