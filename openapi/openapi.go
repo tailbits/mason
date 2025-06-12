@@ -2,7 +2,7 @@ package openapi
 
 import "github.com/magicbell/mason"
 
-type openapiConfig struct {
+type config struct {
 	validate    bool
 	filterFn    func(Record) bool
 	tagsFn      func(mason.Operation) []string
@@ -10,36 +10,43 @@ type openapiConfig struct {
 	transformFn func(*Record)
 }
 
-type openAPIOption func(*openapiConfig)
+type openAPIOption func(*config)
 
 func Validate(skip bool) openAPIOption {
-	return func(c *openapiConfig) {
+	return func(c *config) {
 		c.validate = skip
 	}
 }
 
 func Filter(fn func(Record) bool) openAPIOption {
-	return func(c *openapiConfig) {
+	return func(c *config) {
 		c.filterFn = fn
 	}
 }
 
 func Tags(fn func(mason.Operation) []string, all []string) openAPIOption {
-	return func(c *openapiConfig) {
+	return func(c *config) {
 		c.tagsFn = fn
 		c.allTags = all
 	}
 }
 
 func Transform(fn func(*Record)) openAPIOption {
-	return func(c *openapiConfig) {
+	return func(c *config) {
 		c.transformFn = fn
 	}
 }
 
-func New(a *mason.API, opts ...openAPIOption) ([]byte, error) {
+type Generator struct {
+	api     *mason.API
+	records []Record
+	config  config
+	*ReflectorWrapper
+}
+
+func NewGenerator(a *mason.API, opts ...openAPIOption) (*Generator, error) {
 	// initialise config
-	config := openapiConfig{
+	config := config{
 		validate:    false,
 		filterFn:    func(r Record) bool { return true },
 		tagsFn:      func(mason.Operation) []string { return []string{} },
@@ -62,7 +69,12 @@ func New(a *mason.API, opts ...openAPIOption) ([]byte, error) {
 		}
 	})
 
-	return ToSchema(records, config)
+	return &Generator{
+		api:              a,
+		config:           config,
+		records:          records,
+		ReflectorWrapper: newReflector(),
+	}, nil
 }
 
 func forEachCollectedRoute(routes []mason.Operation, fn func(mason.Operation)) {

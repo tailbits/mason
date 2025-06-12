@@ -265,7 +265,10 @@ func TestOpenAPIGen(t *testing.T) {
 				t.Fatalf("error setting up test: %v", err)
 			}
 
-			schema, err := openapi.New(api, openapi.Validate(false))
+			gen, err := openapi.NewGenerator(api, openapi.Validate(false))
+			assert.NilError(t, err, "failed to create OpenAPI generator")
+
+			schema, err := gen.ToSchema()
 
 			tc.expectedOutcome.Assert(t, schema, err)
 		})

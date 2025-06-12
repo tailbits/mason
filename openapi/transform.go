@@ -16,41 +16,39 @@ var url string = "https://magicbell.com"
 var email string = "hello@magicbell.com"
 var serverDescription string = "MagicBell REST API Base URL"
 
-func ToSchema(records []Record, cfg openapiConfig) ([]byte, error) {
-	var reflector = setupReflector()
-
-	if err := reflector.ingest(records); err != nil {
+func (g *Generator) ToSchema() ([]byte, error) {
+	if err := g.ingest(g.records); err != nil {
 		return nil, fmt.Errorf("failed to ingest records: %w", err)
 	}
 
 	collectedTags := []string{}
-	for tag := range reflector.allTags {
+	for tag := range g.allTags {
 		collectedTags = append(collectedTags, tag)
 	}
-	for _, inferredTag := range cfg.allTags {
-		if _, ok := reflector.allTags[inferredTag]; !ok {
+	for _, inferredTag := range g.config.allTags {
+		if _, ok := g.allTags[inferredTag]; !ok {
 			collectedTags = append(collectedTags, inferredTag)
 		}
 	}
 
 	sort.Strings(collectedTags)
-	reflector.collectTags(collectedTags)
-	if err := reflector.collectDefinitions(); err != nil {
+	g.collectTags(collectedTags)
+	if err := g.collectDefinitions(); err != nil {
 		return nil, fmt.Errorf("failed to collect definitions: %w", err)
 	}
 
-	if cfg.validate {
-		return reflector.marshalJSON()
+	if g.config.validate {
+		return g.marshalJSON()
 	}
 
-	if err := reflector.validate(); err != nil {
+	if err := g.validate(); err != nil {
 		return nil, fmt.Errorf("failed to validate the generated spec: %w", err)
 	}
 
-	return reflector.marshalJSON()
+	return g.marshalJSON()
 }
 
-func setupReflector() *ReflectorWrapper {
+func newReflector() *ReflectorWrapper {
 	reflector := openapi31.NewReflector()
 	reflector.Spec = &openapi31.Spec{Openapi: "3.1.0"}
 	reflector.Spec.Info.
@@ -65,5 +63,9 @@ func setupReflector() *ReflectorWrapper {
 
 	reflector.Reflector.DefaultOptions = append(reflector.Reflector.DefaultOptions, jsonschema.DefinitionsPrefix("#/components/schemas/"))
 
-	return &ReflectorWrapper{reflector, make(definitionsMap), make(map[string]bool)}
+	return &ReflectorWrapper{
+		Reflector: reflector,
+		allDefs:   make(definitionsMap),
+		allTags:   make(map[string]bool),
+	}
 }
