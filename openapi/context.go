@@ -14,7 +14,7 @@ import (
 type ContextWrapper struct {
 	openapi.OperationContext
 	*openapi31.Operation
-	reflector *ReflectorWrapper
+	reflector *Reflector
 }
 
 func (c ContextWrapper) addToReflector() error {
@@ -86,7 +86,7 @@ func (c ContextWrapper) addRespStructure(o mason.Model, options ...openapi.Conte
 	return nil
 }
 
-func NewContextWrapper(ctx openapi.OperationContext, r *ReflectorWrapper) *ContextWrapper {
+func NewContextWrapper(ctx openapi.OperationContext, r *Reflector) *ContextWrapper {
 	ctxWrapper := ContextWrapper{
 		OperationContext: ctx,
 		reflector:        r,

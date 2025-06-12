@@ -41,7 +41,7 @@ type Generator struct {
 	api     *mason.API
 	records []Record
 	config  config
-	*ReflectorWrapper
+	*Reflector
 }
 
 func NewGenerator(a *mason.API, opts ...openAPIOption) (*Generator, error) {
@@ -70,10 +70,10 @@ func NewGenerator(a *mason.API, opts ...openAPIOption) (*Generator, error) {
 	})
 
 	return &Generator{
-		api:              a,
-		config:           config,
-		records:          records,
-		ReflectorWrapper: newReflector(),
+		api:       a,
+		config:    config,
+		records:   records,
+		Reflector: newReflector(),
 	}, nil
 }
 

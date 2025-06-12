@@ -17,13 +17,13 @@ import (
 
 type definitionsMap map[string]jsonschema.Schema
 
-type ReflectorWrapper struct {
+type Reflector struct {
 	*openapi31.Reflector
 	allDefs definitionsMap
 	allTags map[string]bool
 }
 
-func (r *ReflectorWrapper) ingest(records []Record) error {
+func (r *Reflector) ingest(records []Record) error {
 	for _, record := range records {
 		ctx, err := r.newOperationContext(record.Method, record.Path)
 		if err != nil {
@@ -42,7 +42,7 @@ func (r *ReflectorWrapper) ingest(records []Record) error {
 	return nil
 }
 
-func (r *ReflectorWrapper) validate() error {
+func (r *Reflector) validate() error {
 	specBytes, err := r.marshalJSON()
 	if err != nil {
 		return fmt.Errorf("failed to marshal JSON: %w", err)
@@ -93,12 +93,12 @@ func (r *ReflectorWrapper) validate() error {
 	return nil
 }
 
-func (r *ReflectorWrapper) marshalJSON() ([]byte, error) {
+func (r *Reflector) marshalJSON() ([]byte, error) {
 	return r.Reflector.Spec.MarshalJSON()
 }
 
 // collectDefinitions takes all the definitions that have been collected in a cache from all the calls to AddReqStructure/AddRespStructure, and commits them to the reflector's OpenAPI spec.
-func (r *ReflectorWrapper) collectDefinitions() error {
+func (r *Reflector) collectDefinitions() error {
 	// First, check for case-insensitive duplicates.
 	seen := make(map[string]string) // map normalized key -> original key
 	for defName := range r.allDefs {
@@ -125,14 +125,14 @@ func (r *ReflectorWrapper) collectDefinitions() error {
 }
 
 // collectTags takes a list of tags and saves them to the reflector so that they can be included in the final OpenAPI spec as a top-level key.
-func (r *ReflectorWrapper) collectTags(tags []string) {
+func (r *Reflector) collectTags(tags []string) {
 	r.Spec.Tags = make([]openapi31.Tag, len(tags))
 	for i, tag := range tags {
 		r.Spec.Tags[i] = openapi31.Tag{Name: tag}
 	}
 }
 
-func (r *ReflectorWrapper) addModel(model mason.Model) error {
+func (r *Reflector) addModel(model mason.Model) error {
 	if model.IsNil() {
 		return nil
 	}
@@ -151,7 +151,7 @@ func (r *ReflectorWrapper) addModel(model mason.Model) error {
 
 // addDefinition accepts a schema and a name, and adds the schema to the reflector so that it can be included in the final OpenAPI spec.
 // If a definition with the same name already exists, it will be compared with the new definition to ensure they are identical, otherwise an error will be returned.
-func (r *ReflectorWrapper) addDefinition(name string, schema jsonschema.Schema) error {
+func (r *Reflector) addDefinition(name string, schema jsonschema.Schema) error {
 	if name == "" {
 		return fmt.Errorf("definition name cannot be empty")
 	}
@@ -177,7 +177,7 @@ func (r *ReflectorWrapper) addDefinition(name string, schema jsonschema.Schema) 
 	return nil
 }
 
-func (r *ReflectorWrapper) newOperationContext(method, path string) (*ContextWrapper, error) {
+func (r *Reflector) newOperationContext(method, path string) (*ContextWrapper, error) {
 	oc, err := r.Reflector.NewOperationContext(method, path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create operation context: %w", err)

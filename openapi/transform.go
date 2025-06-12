@@ -48,7 +48,7 @@ func (g *Generator) ToSchema() ([]byte, error) {
 	return g.marshalJSON()
 }
 
-func newReflector() *ReflectorWrapper {
+func newReflector() *Reflector {
 	reflector := openapi31.NewReflector()
 	reflector.Spec = &openapi31.Spec{Openapi: "3.1.0"}
 	reflector.Spec.Info.
@@ -63,7 +63,7 @@ func newReflector() *ReflectorWrapper {
 
 	reflector.Reflector.DefaultOptions = append(reflector.Reflector.DefaultOptions, jsonschema.DefinitionsPrefix("#/components/schemas/"))
 
-	return &ReflectorWrapper{
+	return &Reflector{
 		Reflector: reflector,
 		allDefs:   make(definitionsMap),
 		allTags:   make(map[string]bool),
