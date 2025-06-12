@@ -15,17 +15,7 @@ type decodeOptions struct {
 	wrappingKey *string
 }
 
-type wrapped[T model.WithSchema] map[string]T
-
 type DecodeOption func(options *decodeOptions) error
-
-// WithWrappingKey is a DecodeOption that indicates that we expect the incoming JSON to be wrapped in an object with key.
-func WithWrappingKey(key string) DecodeOption {
-	return func(options *decodeOptions) error {
-		options.wrappingKey = &key
-		return nil
-	}
-}
 
 func DecodeRequest[T model.Entity](api *API, r *http.Request, opts ...DecodeOption) (ent T, err error) {
 	if ent.Name() == "NilEntity" {
@@ -52,10 +42,6 @@ func DecodeRequest[T model.Entity](api *API, r *http.Request, opts ...DecodeOpti
 		return ent, fmt.Errorf("dereferenceSchema ent[%s]: %w", ent.Name(), err)
 	}
 
-	if options.wrappingKey != nil {
-		schema = []byte(fmt.Sprintf(`{"type": "object", "properties": {"%s": %s }, "required": ["%s"]}`, *options.wrappingKey, schema, *options.wrappingKey))
-	}
-
 	if err := model.Validate(schema, body); err != nil {
 		return ent, fmt.Errorf("validate.Validate: %w", err)
 	}
@@ -64,13 +50,6 @@ func DecodeRequest[T model.Entity](api *API, r *http.Request, opts ...DecodeOpti
 	// we need to create a new instance of the entity else "ent" will be a nil pointer.
 	// todo: defer to the unmarshal function that already exists on T
 	switch {
-	case options.wrappingKey != nil:
-		wrapped := make(wrapped[T])
-		if err := json.Unmarshal(body, &wrapped); err != nil {
-			return ent, fmt.Errorf("wrapped.Unmarshal: %w", err)
-		}
-
-		return wrapped[*options.wrappingKey], nil
 	case reflect.TypeOf(ent).Kind() == reflect.Ptr:
 		elemType := reflect.TypeOf(ent).Elem()
 		newEnt := reflect.New(elemType).Interface()
