@@ -3,9 +3,9 @@
 Mason is an API framework for writing HTTP handlers with Input/Output models described by JSON schema.
 It was created to serve the API (v2) at [MagicBell](https://www.magicbell.com), and guided by the following design goals:
 
-- **JSON schema first** - The Input/Output models are described by JSON schema, with an example. The schema & example are tested for alignment so they don't out of sync. This is achieved by implementing the `model.Entity` interface for the IO structs.
+- **JSON schema first** - The Input/Output models are described by JSON schema, with an example. By implementing the `model.Entity` interface I/O model definition is tested against the schema so they are never out of sync.
 - **Incremental adoption** - Mason should be easy to add to an existing project, by giving it a `mason.Runtime` implementation that can `Handle` the `Operation` created by Mason, and `Respond` to a HTTP request.
-- **Support Resource grouping & querying** - REST API resources and endpoints are a map to an API/product's feature offerings. For example `/integrations/slack`, and `/integrations/web_push` are two different resources, but if you wanted to get all `integration` resoureces, the integration `RouteGroup` comes in handy.
+- **Support Resource grouping & querying** - REST API resources and endpoints are a map to an API/product's feature offerings. For example `/integrations/slack`, and `/integrations/web_push` are two different resources, but to get all `integration` resources, the integration `RouteGroup` comes in handy.
 
 ## Usage
 
@@ -63,7 +63,7 @@ Let's add a new `GET /ping` endpoint that returns the current timestamp. To do t
 
 ```
 
-Now we can use it to define the Handler (note that we use `model.Nil` for decoding query params, etc and since this is GET, there is no input struct)
+Now we can use it to define the Handler (note that we use `model.Nil` for decoding query params. Since this is GET request, there is no input struct, but `model.Nil` can also be used for `POST/PUT` handlers that accept no request body.
 
 ```go
   func PingHandler(ctx context.Context, r *http.Request, params model.Nil) (rsp *Response, err error) {
