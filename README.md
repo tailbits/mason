@@ -9,7 +9,7 @@ It was created to serve the API (v2) at [MagicBell](https://wwww.magicbell.com?u
 
 ## Usage
 
-Add it to your project with
+Add it to your project:
 
 ```bash
   go get github.com/magicbell/mason@latest
@@ -23,7 +23,7 @@ You'll need a `Runtime` implementation to start using Mason in your existing pro
 
 ##\* `GET` Handler
 
-Let's add a new `GET /ping` endpoint that returns the current timestamp. To do this, we need to define the output struct
+Let's add a new `GET /ping` endpoint that returns the current timestamp. To do this, we need to define the output struct.
 
 ```go
   var _ model.Entity = (*Response)(nil)
@@ -160,7 +160,7 @@ func (r *Input) Unmarshal(data json.RawMessage) error {
 }
 ```
 
-Let's define the `CountResponse` as the Output model for the `POST` (as well as the `GET`) handler
+Let's define the `CountResponse` as the Output model for the `POST` (as well as the `GET`) handler.
 
 ```go
 // Output Model
@@ -202,7 +202,7 @@ func (r *Response) Unmarshal(data json.RawMessage) error {
 }
 ```
 
-Finally, we can define the `POST` handler, and accept the validated and decoded `Input` model in the logic
+Finally, we can define the `POST` handler, and accept the validated and decoded `Input` model in our code.
 
 ```go
   var count int
@@ -234,7 +234,7 @@ Registering the handler on the route group
 		WithDesc("Increment the counter by one, or the supplied increment"))
 ```
 
-The code for this example is in [example/counter/main.go](example/counter/main.go), and it also contains a `GET` handler, as well the route for grabbing the OpenAPI file.
+The code for this example is in [example/counter/main.go](example/counter/main.go), and it contains a `GET` handler, as well the route for grabbing the OpenAPI file.
 
 Let's start counting!
 
@@ -272,7 +272,7 @@ curl -v http://localhost:9090/increment \
 {"errors":[{"error":null,"message":"Param 'increment' should be of type [integer,null]"}]}
 ```
 
-The error formatting is handled by the `Respond` method in the `HTTPRuntime` by checking if the error is of type [model.ValidationError](model/error.go). This code can be the starting point for returning formatted errors to your users, in your Runtime implementation, or a middleware.
+The `Respond` method handles the error formatting in the `HTTPRuntime` by checking if the error is of type [model.ValidationError](model/error.go). This code can be the starting point for returning formatted errors to your users, in your Runtime implementation, or a middleware.
 
 ```go
   func (r *HTTPRuntime) Handle(method string, path string, handler WebHandler, mws ...func(WebHandler) WebHandler) {
@@ -309,7 +309,7 @@ Mason collects the schema of every I/O model registered via the Handlers in a re
 
 To illustrate the derefeencing, take a look at the [example/schemaexample/main.go](example/schemaexample/main.go), which recreates the `POST /increment` handler from the counter example, but this time, returns a `server` key in the response. The server key contains a timestamp, and we also add a `GET /healthcheck` endpoint that returns the same key in it's response.
 
-First, let's setup the `GET /healthcheck` output model and handler
+First, let's setup the `GET /healthcheck` output model and handler.
 
 ```go
   var _ model.Entity = (*Response)(nil)
@@ -357,14 +357,14 @@ First, let's setup the `GET /healthcheck` output model and handler
   }
 ```
 
-Is our API healthy?
+Is the API healthy? Let's find out!
 
 ```
 ➜  ext git:(chore/mason-update) ✗ curl http://localhost:9090/healthcheck
 {"timestamp":"2025-06-13T09:26:31.615403Z"}
 ```
 
-We can use the schema contributed by the `HealthResponse`, and identified by it's `Name()` in the `Response` model for the `POST /increment` handler
+We can use the schema contributed by the `HealthResponse`, and identified by it's `Name()` in the `Response` model for the `POST /increment` handler.
 
 ```go
   type Response struct {
@@ -398,7 +398,7 @@ curl http://localhost:9090/increment \
 {"count":2,"server":{"timestamp":"2025-06-13T09:25:37.031658Z"}}
 ```
 
-The generated OpenAPI schema uses the references from the registry, and if we were composing an input model, they'd also be used for validation.
+The generated OpenAPI schema uses the registry references, and if we were composing an input model, the dereferenced schema would also be used for validation.
 
 ```json
 ...
@@ -463,11 +463,10 @@ The generated OpenAPI schema uses the references from the registry, and if we we
               "count": 5
             }
           ],
-...n
-
+...
 ```
 
-If you need the de-referenced schema, you can grab it from Mason
+If you need the dereferenced schema, you can grab it from the api instance.
 
 ```go
 	sch, err := api.DereferenceSchema(schema_with_references)
@@ -479,4 +478,6 @@ The [sync](model/sync) package can check if the model's struct, schema, and exam
 
 ## Project Status
 
-As mentioned in the intro, Mason is in active development, and usage at [MagicBell](https://wwww.magicbell.com?utm_source=github&utm_campaign=mason). In open-sourcing it, we want to give back to the incredible Go community, and also receive feedback, contributions, and ideas for improvements. Plesae create issues with your questions, and if you use Mason, we'd love to hear from you too!
+As mentioned in the intro, Mason is in active development and usage at [MagicBell](https://wwww.magicbell.com?utm_source=github&utm_campaign=mason). In open-sourcing it, we want to give back to the incredible Go community, and also receive feedback, contributions, and ideas for improvements.
+
+Plesae create issues with your questions, and if you use Mason, we'd love to hear from you, too!

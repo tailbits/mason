@@ -9,7 +9,6 @@ import (
 
 	"github.com/magicbell/mason"
 	"github.com/magicbell/mason/model"
-	"github.com/magicbell/mason/model/sync"
 	"github.com/magicbell/mason/openapi"
 )
 
@@ -194,15 +193,6 @@ func main() {
 
 		return nil
 	})
-
-	// Check model sync
-	val, err := sync.New(api, &Response{})
-	if err != nil {
-		panic(err)
-	}
-	if err := val.IsSynced(); err != nil {
-		fmt.Println("val.Sync: %w", err)
-	}
 
 	server := &http.Server{
 		Addr:    ":9090",
