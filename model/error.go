@@ -12,8 +12,17 @@ import (
 
 // FieldError is used to indicate an error with a specific request field.
 type FieldError struct {
-	Error   gojsonschema.ResultError `json:"error,omitempty"`
-	Message string                   `json:"message"`
+	field   string
+	details map[string]interface{}
+	Message string `json:"message"`
+}
+
+func (fe FieldError) Field() string {
+	return fe.field
+}
+
+func (fe FieldError) Details() map[string]interface{} {
+	return fe.details
 }
 
 // ValidationError represents a collection of field errors.
@@ -39,7 +48,8 @@ func ToValidationError(result *gojsonschema.Result) ValidationError {
 			continue
 		default:
 			errs = append(errs, FieldError{
-				Error:   res,
+				field:   res.Field(),
+				details: res.Details(),
 				Message: newErrorMessage(res),
 			})
 		}
