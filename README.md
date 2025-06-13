@@ -258,8 +258,20 @@ curl http://localhost:9090/increment \
 How about some invalid input?
 
 ```bash
-curl http://localhost:9090/increment \
+# -v to see the response code and body
+curl -v http://localhost:9090/increment \
   --header 'Content-Type: application/json' \
   --data '{"increment": "2"}'
-validateAndDecode: unable to unmarshal the data: json: cannot unmarshal string into Go struct field Input.increment of type int
+
+* upload completely sent off: 18 bytes
+< HTTP/1.1 422 Unprocessable Entity
+< Content-Type: application/json
+< Date: Fri, 13 Jun 2025 08:02:05 GMT
+< Content-Length: 91
+<
+{"errors":[{"error":null,"message":"Param 'increment' should be of type [integer,null]"}]}
+```
+
+```
+
 ```

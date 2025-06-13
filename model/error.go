@@ -10,51 +10,42 @@ import (
 	"github.com/xeipuuv/gojsonschema"
 )
 
-// JSONFieldError is used to indicate an error with a specific request field.
-type JSONFieldError struct {
-	Message string `json:"message"`
+// FieldError is used to indicate an error with a specific request field.
+type FieldError struct {
+	Error   gojsonschema.ResultError `json:"error,omitempty"`
+	Message string                   `json:"message"`
 }
 
-// JSONFieldErrors represents a collection of field errors.
-type JSONFieldErrors struct {
-	Errors []JSONFieldError `json:"errors"`
+// ValidationError represents a collection of field errors.
+type ValidationError struct {
+	Errors []FieldError `json:"errors"`
 }
 
 // Error implements the error interface on FieldErrors.
-func (fe JSONFieldErrors) Error() string {
+func (fe ValidationError) Error() string {
 	d, err := json.Marshal(fe)
 	if err != nil {
 		return err.Error()
 	}
+
 	return string(d)
 }
 
-func NewJSONFieldErrors(msgs []string) JSONFieldErrors {
-	errs := make([]JSONFieldError, 0, len(msgs))
-	for _, msg := range msgs {
-		errs = append(errs, JSONFieldError{
-			Message: msg,
-		})
-	}
-	ret := JSONFieldErrors{Errors: errs}
-	SortErrors(&ret)
-	return ret
-}
-
-func toFieldErrors(result *gojsonschema.Result) JSONFieldErrors {
-	errs := make([]JSONFieldError, 0, len(result.Errors()))
+func ToValidationError(result *gojsonschema.Result) ValidationError {
+	errs := make([]FieldError, 0, len(result.Errors()))
 	for _, res := range result.Errors() {
 		switch res.(type) {
 		case *gojsonschema.NumberAllOfError, *gojsonschema.NumberAnyOfError, *gojsonschema.NumberOneOfError:
 			continue
 		default:
-			errs = append(errs, JSONFieldError{
+			errs = append(errs, FieldError{
+				Error:   res,
 				Message: newErrorMessage(res),
 			})
 		}
 	}
 
-	res := JSONFieldErrors{
+	res := ValidationError{
 		Errors: errs,
 	}
 	SortErrors(&res)
@@ -62,28 +53,17 @@ func toFieldErrors(result *gojsonschema.Result) JSONFieldErrors {
 	return res
 }
 
-func SortErrors(e *JSONFieldErrors) {
-	slices.SortFunc(e.Errors, func(a, b JSONFieldError) int { return cmp.Compare(a.Message, b.Message) })
+func SortErrors(e *ValidationError) {
+	slices.SortFunc(e.Errors, func(a, b FieldError) int { return cmp.Compare(a.Message, b.Message) })
 }
 
 // IsJSONFieldError checks if an error of type FieldErrors exists.
 func IsJSONFieldError(err error) bool {
-	var fe JSONFieldErrors
+	var fe ValidationError
 	return errors.As(err, &fe)
 }
 
-// GetJSONFieldErrors returns a copy of the FieldErrors pointer.
-func GetJSONFieldErrors(err error) JSONFieldErrors {
-	var fe JSONFieldErrors
-	if !errors.As(err, &fe) {
-		return JSONFieldErrors{}
-	}
-
-	return fe
-}
-
 // =============================================================================
-
 func newErrorMessage(resErr gojsonschema.ResultError) string {
 	switch resErr.(type) {
 	case *gojsonschema.RequiredError:

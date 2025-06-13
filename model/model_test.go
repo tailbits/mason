@@ -8,11 +8,11 @@ import (
 )
 
 func TestErrorsAreSorted(t *testing.T) {
-	e := model.JSONFieldErrors{Errors: []model.JSONFieldError{
+	e := model.ValidationError{Errors: []model.FieldError{
 		{Message: "bbb"},
 		{Message: "aaa"},
 	}}
-	want := model.JSONFieldErrors{Errors: []model.JSONFieldError{
+	want := model.ValidationError{Errors: []model.FieldError{
 		{Message: "aaa"},
 		{Message: "bbb"},
 	}}

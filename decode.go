@@ -41,12 +41,11 @@ func DecodeRequest[T model.Entity](api *API, r *http.Request, opts ...DecodeOpti
 	}
 
 	if err := model.Validate(schema, body); err != nil {
-		return ent, fmt.Errorf("validate.Validate: %w", err)
+		return ent, fmt.Errorf("model.Validate: %w", err)
 	}
 
-	// do the unmarshalling. note: if the entity is a pointer,
-	// we need to create a new instance of the entity else "ent" will be a nil pointer.
-	// todo: defer to the unmarshal function that already exists on T
+	// If the entity is a pointer, we need to create a new instance of the entity,
+	// or else "ent" will be a nil pointer.
 	switch {
 	case reflect.TypeOf(ent).Kind() == reflect.Ptr:
 		elemType := reflect.TypeOf(ent).Elem()

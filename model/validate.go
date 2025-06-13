@@ -11,12 +11,16 @@ import (
 var ErrBodyEmpty = errors.New("body empty")
 
 // Validate validates the provided model against it's declared tags.
-func Validate(schemaDoc []byte, body []byte) error {
+func Validate(schema []byte, body []byte) error {
 	if len(body) == 0 {
-		return fmt.Errorf("validateBodySchema: %w %w", NewJSONFieldErrors([]string{"body is empty"}), ErrBodyEmpty)
+		return fmt.Errorf(
+			"validateBodySchema: %w %w",
+			ValidationError{Errors: []FieldError{{Message: "body is empty"}}},
+			ErrBodyEmpty,
+		)
 	}
 
-	doc := gojsonschema.NewBytesLoader(schemaDoc)
+	doc := gojsonschema.NewBytesLoader(schema)
 	sch, err := gojsonschema.NewSchema(doc)
 	if err != nil {
 		return fmt.Errorf("gojsonschema.NewSchema: [%s] %w", doc, err)
@@ -28,7 +32,7 @@ func Validate(schemaDoc []byte, body []byte) error {
 	}
 
 	if !res.Valid() {
-		return toFieldErrors(res)
+		return ToValidationError(res)
 	}
 
 	return nil

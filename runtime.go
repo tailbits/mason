@@ -3,8 +3,11 @@ package mason
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
+
+	"github.com/magicbell/mason/model"
 )
 
 type RouteHandler interface {
@@ -35,8 +38,19 @@ func (r *HTTPRuntime) Handle(method string, path string, handler WebHandler, mws
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 			return
 		}
+
 		ctx := req.Context()
 		if err := handler(ctx, w, req); err != nil {
+			var fe model.ValidationError
+			if errors.As(err, &fe) {
+				// Return well-formatted validation errors
+				if err := r.Respond(ctx, w, fe, http.StatusUnprocessableEntity); err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+				}
+
+				return
+			}
+
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 	})

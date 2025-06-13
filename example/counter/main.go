@@ -37,10 +37,11 @@ func (r *Input) Schema() []byte {
 	return []byte(`{
 		"type": "object",
 		"properties": {
-			"timestamp": {
+			"increment": {
 				"type": ["integer", "null"]
 			}
-		}
+		},
+		"additionalProperties": false
 	}`)
 }
 
