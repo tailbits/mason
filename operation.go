@@ -92,7 +92,7 @@ func registerResponseEntity[O model.Entity, Q any](api *API, method string, grou
 		opt(&m)
 	}
 
-	api.registerEntity(o)
+	api.registerModel(o)
 
 	api.registerOp(m, group)
 }

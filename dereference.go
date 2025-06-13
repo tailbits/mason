@@ -22,7 +22,7 @@ func (a *API) DereferenceSchema(schema []byte) ([]byte, error) {
 		if _, ok := sch.Definitions[id]; !ok {
 			// that means we have an external reference
 			// we need to dereference it
-			e, ok := a.GetEntity(id)
+			e, ok := a.GetModel(id)
 			if !ok {
 				err = fmt.Errorf("entity %s not found", id)
 				return

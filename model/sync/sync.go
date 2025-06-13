@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/magicbell/mason"
 	"github.com/magicbell/mason/model"
 	"github.com/swaggest/jsonschema-go"
 )
@@ -17,14 +18,19 @@ type ShouldSkip interface {
 	SkipSchemaValidation() bool
 }
 
-func New(model model.Entity) (*Validator, error) {
-	return new(model.Name(), model, model.Schema())
-}
-
 type Validator struct {
 	Sch   *jsonschema.Schema
 	Model any
 	Name  string
+}
+
+func New(api *mason.API, model model.Entity) (*Validator, error) {
+	sch, err := api.DereferenceSchema(model.Schema())
+	if err != nil {
+		return nil, fmt.Errorf("error dereferencing schema for %s: %w", model.Name(), err)
+	}
+
+	return new(model.Name(), model, sch)
 }
 
 // serverDefined returns true if we expect the field to be on the struct, but not in the schema (i.e. it is defined on the server rather than in the incoming payload)

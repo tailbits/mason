@@ -18,7 +18,7 @@ type Middleware interface {
 type API struct {
 	Runtime
 	registry   Registry
-	entities   map[string]model.Entity
+	models     map[string]model.Entity
 	routeIndex groupMap
 }
 
@@ -26,7 +26,7 @@ func NewAPI(runtime Runtime) *API {
 	return &API{
 		Runtime:    runtime,
 		registry:   make(Registry),
-		entities:   make(map[string]model.Entity),
+		models:     make(map[string]model.Entity),
 		routeIndex: make(groupMap),
 	}
 }
@@ -38,12 +38,12 @@ func (a *API) NewRouteGroup(name string) *RouteGroup {
 	}
 }
 
-func (a *API) registerEntity(entity model.Entity) {
-	a.entities[entity.Name()] = entity
+func (a *API) registerModel(mdl model.Entity) {
+	a.models[mdl.Name()] = mdl
 }
 
-func (a *API) GetEntity(name string) (model.Entity, bool) {
-	e, ok := a.entities[name]
+func (a *API) GetModel(name string) (model.Entity, bool) {
+	e, ok := a.models[name]
 
 	return e, ok
 }
@@ -65,8 +65,8 @@ func registerModel[I, O model.Entity, Q any](api *API, method string, group stri
 		opt(&m)
 	}
 
-	api.registerEntity(i)
-	api.registerEntity(o)
+	api.registerModel(i)
+	api.registerModel(o)
 
 	api.registerOp(m, group)
 }
