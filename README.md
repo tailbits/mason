@@ -21,6 +21,8 @@ You'll need a `Runtime` implementation to start using Mason in your existing pro
   api := mason.NewAPI(mason.NewHTTPRuntime())
 ```
 
+## `GET` Handler
+
 Let's add a new `GET /ping` endpoint that returns the current timestamp. To do this, we need to define the output struct
 
 ```go
@@ -112,4 +114,152 @@ You can try this example by running [example/ping/main.go](/example/ping/main.go
 
 		return nil
 	})
+```
+
+## `POST` Handler
+
+Let's move on to more the more exciting stuff, and build a small counter API. Let's add a `POST` handler that will increment the counter by 1, or by an `increment`, which is an optional field in the request body. Once again, we start by defining a model that confirms to the `platform.Entity` interface.
+
+```go
+
+var _ model.Entity = (*Input)(nil)
+
+// Input Model
+type Input struct {
+	Increment *int `json:"increment"`
+}
+
+// Example implements model.Entity.
+func (r *Input) Example() []byte {
+	return []byte(`{
+		"increment": 5
+	}`)
+}
+
+func (r *Input) Marshal() (json.RawMessage, error) {
+	return json.Marshal(r)
+}
+
+func (r *Input) Name() string {
+	return "IncrementInput"
+}
+
+func (r *Input) Schema() []byte {
+	return []byte(`{
+		"type": "object",
+		"properties": {
+			"timestamp": {
+				"type": ["integer", "null"]
+			}
+		}
+	}`)
+}
+
+func (r *Input) Unmarshal(data json.RawMessage) error {
+	return json.Unmarshal(data, r)
+}
+```
+
+Let's define the `CountResponse` as the Output model for the `POST` (as well as the `GET`) handler
+
+```go
+// Output Model
+var _ model.Entity = (*Response)(nil)
+
+type Response struct {
+	Count int `json:"count"`
+}
+
+// Example implements model.Entity.
+func (r *Response) Example() []byte {
+	return []byte(`{
+		"count": 5
+	}`)
+}
+
+func (r *Response) Marshal() (json.RawMessage, error) {
+	return json.Marshal(r)
+}
+
+func (r *Response) Name() string {
+	return "CountResponse"
+}
+
+func (r *Response) Schema() []byte {
+	return []byte(`{
+		"type": "object",
+		"properties": {
+			"count": {
+				"type": "integer"
+			}
+		},
+		"required": ["count"]
+	}`)
+}
+
+func (r *Response) Unmarshal(data json.RawMessage) error {
+	return json.Unmarshal(data, r)
+}
+```
+
+Finally, we can define the `POST` handler, and accept the validated and decoded `Input` model in the logic
+
+```go
+  var count int
+
+  func IncrementHandler(ctx context.Context, r *http.Request, inp *Input, params model.Nil) (rsp *Response, err error) {
+    inc := 1
+    if inp.Increment != nil {
+      inc = *inp.Increment
+    }
+    count += inc
+
+    return &Response{
+      Count: count,
+    }, nil
+  }
+```
+
+Registering the handler on the route group
+
+```go
+	rtm := mason.NewHTTPRuntime()
+	api := mason.NewAPI(rtm)
+	grp := api.NewRouteGroup("counter")
+
+	grp.Register(mason.HandlePost(IncrementHandler).
+		Path("/increment").
+		WithOpID("increment").
+		WithSummary("Increment the counter").
+		WithDesc("Increment the counter by one, or the supplied increment"))
+```
+
+The code for this example is in [example/counter/main.go](example/counter/main.go), and it also contains a `GET` handler, as well the route for grabbing the OpenAPI file.
+
+Let's start counting!
+
+```bash
+# --data sends a POST request with curl
+curl http://localhost:9090/increment \
+  --header 'Content-Type: application/json' \
+  --data '{}'
+{"count":1}
+```
+
+Let's increment by 2
+
+```bash
+curl http://localhost:9090/increment \
+  --header 'Content-Type: application/json' \
+  --data '{"increment": 2}'
+{"count":3}
+```
+
+How about some invalid input?
+
+```bash
+curl http://localhost:9090/increment \
+  --header 'Content-Type: application/json' \
+  --data '{"increment": "2"}'
+validateAndDecode: unable to unmarshal the data: json: cannot unmarshal string into Go struct field Input.increment of type int
 ```
