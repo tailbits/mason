@@ -4,7 +4,7 @@ Mason is a JSON schema-backed API framework for writing HTTP handlers in Go. It 
 
 ## Background
 
-It was created to serve the API (v2) at [MagicBell](https://wwww.magicbell.com?utm_source=github&utm_campaign=mason), and guided by the following design goals:
+It was created to serve the API (v2) at [MagicBell](https://www.magicbell.com?utm_source=github&utm_campaign=mason), and guided by the following design goals:
 
 - **JSON schema first** - The Input/Output models are described by JSON schema, with an example. By implementing the `model.Entity` interface, the model definition is tested against the schema so they are never out of sync.
 - **Incremental adoption** - Mason should be easy to add to an existing project, by giving it a `mason.Runtime` implementation that can `Handle` the `Operation` created by Mason, and `Respond` to a HTTP request.
