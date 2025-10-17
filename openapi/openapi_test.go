@@ -9,9 +9,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/magicbell/mason"
 	"github.com/magicbell/mason/model"
 	"github.com/magicbell/mason/openapi"
+	"github.com/tailbits/mason"
 	"gotest.tools/v3/assert"
 )
 

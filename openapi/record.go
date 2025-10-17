@@ -1,8 +1,8 @@
 package openapi
 
 import (
-	"github.com/magicbell/mason"
 	"github.com/magicbell/mason/model"
+	"github.com/tailbits/mason"
 )
 
 type Record struct {

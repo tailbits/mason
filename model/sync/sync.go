@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/magicbell/mason"
 	"github.com/magicbell/mason/model"
 	"github.com/swaggest/jsonschema-go"
+	"github.com/tailbits/mason"
 )
 
 type ShouldSkip interface {

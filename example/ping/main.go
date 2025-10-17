@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/magicbell/mason"
 	"github.com/magicbell/mason/model"
 	"github.com/magicbell/mason/openapi"
+	"github.com/tailbits/mason"
 )
 
 var _ model.Entity = (*Response)(nil)

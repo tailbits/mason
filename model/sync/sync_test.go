@@ -7,9 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/magicbell/mason/model"
-	"github.com/magicbell/mason/model/sync"
 	"github.com/swaggest/jsonschema-go"
+	"github.com/tailbits/mason/model"
+	"github.com/tailbits/masonmodel/sync"
 )
 
 var _ model.Entity = (*TestModel)(nil)
