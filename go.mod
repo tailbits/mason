@@ -2,12 +2,10 @@ module github.com/tailbits/mason
 
 go 1.24.2
 
-replace github.com/magicbell/mason => github.com/tailbits/mason v0.0.0-20251017153817-7c61fb534519
-
 require (
 	github.com/daveshanley/vacuum v0.16.0
 	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3
-	github.com/swaggest/jsonschema-go v0.3.74
+	github.com/swaggest/jsonschema-go v0.3.78
 	github.com/swaggest/openapi-go v0.2.59
 	github.com/xeipuuv/gojsonschema v1.2.0
 	gotest.tools v2.2.0+incompatible
@@ -52,7 +50,7 @@ require (
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.1 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/speakeasy-api/jsonpath v0.6.2 // indirect
-	github.com/swaggest/refl v1.3.1 // indirect
+	github.com/swaggest/refl v1.4.0 // indirect
 	github.com/vmware-labs/yaml-jsonpath v0.3.2 // indirect
 	github.com/wk8/go-ordered-map/v2 v2.1.9-0.20240815153524-6ea36470d1bd // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
