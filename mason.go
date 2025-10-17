@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/magicbell/mason/model"
+	"github.com/tailbits/mason/model"
 )
 
 type groupMap map[string]string

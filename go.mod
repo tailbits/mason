@@ -1,6 +1,8 @@
-module github.com/magicbell/mason
+module github.com/tailbits/mason
 
 go 1.24.2
+
+replace github.com/magicbell/mason => github.com/tailbits/mason v0.0.0-20251017153817-7c61fb534519
 
 require (
 	github.com/daveshanley/vacuum v0.16.0

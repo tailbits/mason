@@ -3,7 +3,7 @@ package mason_test
 import (
 	"testing"
 
-	"github.com/magicbell/mason"
+	"github.com/tailbits/mason"
 	"gotest.tools/assert"
 	"gotest.tools/assert/cmp"
 )

@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/magicbell/mason"
+	"github.com/tailbits/mason"
 )
 
 type decodeTest[T any] struct {
@@ -204,7 +204,10 @@ func TestDecodeQueryParams(t *testing.T) {
 			{
 				Name:        "Invalid time",
 				QueryString: "from=notatime",
-				Expected:    struct { From time.Time `json:"from"`; To *time.Time `json:"to"` }{},
+				Expected: struct {
+					From time.Time  `json:"from"`
+					To   *time.Time `json:"to"`
+				}{},
 				ExpectError: true,
 			},
 		},
@@ -227,28 +230,38 @@ func TestDecodeQueryParams(t *testing.T) {
 			{
 				Name:        "RFC3339 Z",
 				QueryString: "at=2025-09-20T12:00:00Z",
-				Expected: func() struct{ At time.Time `json:"at"` } {
+				Expected: func() struct {
+					At time.Time `json:"at"`
+				} {
 					at, _ := time.Parse(time.RFC3339, "2025-09-20T12:00:00Z")
-					return struct{ At time.Time `json:"at"` }{At: at}
+					return struct {
+						At time.Time `json:"at"`
+					}{At: at}
 				}(),
 				ExpectError: false,
 			},
 			{
 				Name:        "No zone with seconds",
 				QueryString: "at=2025-09-20T12:00:00",
-				Expected: struct{ At time.Time `json:"at"` }{At: time.Date(2025, 9, 20, 12, 0, 0, 0, time.UTC)},
+				Expected: struct {
+					At time.Time `json:"at"`
+				}{At: time.Date(2025, 9, 20, 12, 0, 0, 0, time.UTC)},
 				ExpectError: false,
 			},
 			{
 				Name:        "No zone minutes",
 				QueryString: "at=2025-09-20T12:00",
-				Expected: struct{ At time.Time `json:"at"` }{At: time.Date(2025, 9, 20, 12, 0, 0, 0, time.UTC)},
+				Expected: struct {
+					At time.Time `json:"at"`
+				}{At: time.Date(2025, 9, 20, 12, 0, 0, 0, time.UTC)},
 				ExpectError: false,
 			},
 			{
 				Name:        "Date only",
 				QueryString: "at=2025-09-20",
-				Expected: struct{ At time.Time `json:"at"` }{At: time.Date(2025, 9, 20, 0, 0, 0, 0, time.UTC)},
+				Expected: struct {
+					At time.Time `json:"at"`
+				}{At: time.Date(2025, 9, 20, 0, 0, 0, 0, time.UTC)},
 				ExpectError: false,
 			},
 		},

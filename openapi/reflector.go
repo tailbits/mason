@@ -9,10 +9,10 @@ import (
 	"github.com/daveshanley/vacuum/model"
 	"github.com/daveshanley/vacuum/motor"
 	"github.com/daveshanley/vacuum/rulesets"
-	"github.com/magicbell/mason"
 	"github.com/sergi/go-diff/diffmatchpatch"
 	"github.com/swaggest/jsonschema-go"
 	"github.com/swaggest/openapi-go/openapi31"
+	"github.com/tailbits/mason"
 )
 
 type definitionsMap map[string]jsonschema.Schema

@@ -6,7 +6,7 @@ import (
 	"path"
 	"strings"
 
-	m "github.com/magicbell/mason/model"
+	m "github.com/tailbits/mason/model"
 )
 
 var successCodes = map[string]int{

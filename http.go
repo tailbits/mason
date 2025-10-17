@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/magicbell/mason/model"
+	"github.com/tailbits/mason/model"
 )
 
 type HandlerWithBody[T model.Entity, O model.Entity, Q any] func(ctx context.Context, r *http.Request, model T, params Q) (response O, err error)

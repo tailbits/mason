@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/magicbell/mason/model"
 	"github.com/swaggest/jsonschema-go"
+	"github.com/tailbits/mason/model"
 )
 
 var _ jsonschema.Exposer = (*Model)(nil)

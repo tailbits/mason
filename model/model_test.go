@@ -3,7 +3,7 @@ package model_test
 import (
 	"testing"
 
-	"github.com/magicbell/mason/model"
+	"github.com/tailbits/mason/model"
 	"gotest.tools/v3/assert"
 )
 

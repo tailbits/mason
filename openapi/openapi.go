@@ -1,6 +1,6 @@
 package openapi
 
-import "github.com/magicbell/mason"
+import "github.com/tailbits/mason"
 
 type config struct {
 	validate    bool

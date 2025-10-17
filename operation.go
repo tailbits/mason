@@ -1,6 +1,6 @@
 package mason
 
-import "github.com/magicbell/mason/model"
+import "github.com/tailbits/mason/model"
 
 type Operation struct {
 	OperationID string                 `json:"operationID,omitempty"`

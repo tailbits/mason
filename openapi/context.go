@@ -5,10 +5,10 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/magicbell/mason"
 	"github.com/swaggest/jsonschema-go"
 	"github.com/swaggest/openapi-go"
 	"github.com/swaggest/openapi-go/openapi31"
+	"github.com/tailbits/mason"
 )
 
 type ContextWrapper struct {

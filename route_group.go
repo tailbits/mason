@@ -3,7 +3,7 @@ package mason
 import (
 	"path"
 
-	"github.com/magicbell/mason/internal/casing"
+	"github.com/tailbits/mason/internal/casing"
 )
 
 type RouteGroup struct {

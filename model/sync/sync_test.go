@@ -9,7 +9,7 @@ import (
 
 	"github.com/swaggest/jsonschema-go"
 	"github.com/tailbits/mason/model"
-	"github.com/tailbits/masonmodel/sync"
+	"github.com/tailbits/mason/model/sync"
 )
 
 var _ model.Entity = (*TestModel)(nil)

@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/magicbell/mason/model"
+	"github.com/tailbits/mason/model"
 )
 
 type RouteHandler interface {
