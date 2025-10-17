@@ -15,7 +15,7 @@ It was created to serve the API (v2) at [MagicBell](https://www.magicbell.com?ut
 Add it to your project:
 
 ```bash
-  go get github.com/magicbell/mason@latest
+  go get github.com/tailbits/mason@latest
 ```
 
 You'll need a `Runtime` implementation to start using Mason in your existing project, but for new projects, or to kick the tires, you can use the `[HTTPRuntime](runtime.go)`.
