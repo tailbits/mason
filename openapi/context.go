@@ -57,6 +57,18 @@ func (c *ContextWrapper) from(record Record) error {
 		c.SetSummary(record.Summary)
 	}
 
+	if record.PathSummary != "" || record.PathDescription != "" {
+		path := c.PathPattern()
+		pathItem := c.reflector.Spec.PathsEns().MapOfPathItemValues[path]
+		if record.PathSummary != "" {
+			pathItem.WithSummary(record.PathSummary)
+		}
+		if record.PathDescription != "" {
+			pathItem.WithDescription(record.PathDescription)
+		}
+		c.reflector.Spec.PathsEns().WithMapOfPathItemValuesItem(path, pathItem)
+	}
+
 	if record.Extensions != nil {
 		c.Operation.WithMapOfAnything(record.Extensions)
 	}

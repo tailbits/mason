@@ -34,6 +34,16 @@ func (g *RouteGroup) Register(builder Builder) {
 	builder.WithGroup(g.FullPath()).Register(g.rtm)
 }
 
+func (g *RouteGroup) WithSummary(summary string) *RouteGroup {
+	g.rtm.setGroupSummary(g.FullPath(), summary)
+	return g
+}
+
+func (g *RouteGroup) WithDescription(description string) *RouteGroup {
+	g.rtm.setGroupDescription(g.FullPath(), description)
+	return g
+}
+
 // SkipRESTValidation relaxes the constraint that all routes in a group must handle the same resource.
 func (g *RouteGroup) SkipRESTValidation(name string) *RouteGroup {
 	if name == "" {

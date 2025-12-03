@@ -138,6 +138,18 @@ func TestSkipRESTValidation(t *testing.T) {
 	})
 }
 
+func TestGroupMetadata(t *testing.T) {
+	api := mason.NewAPI(mason.NewHTTPRuntime())
+	grp := api.NewRouteGroup("Test")
+
+	grp.WithSummary("Test Summary").WithDescription("Test Description")
+
+	meta, ok := api.GroupMetadata("test")
+	assert.Assert(t, ok)
+	assert.Equal(t, "Test Summary", meta.Summary)
+	assert.Equal(t, "Test Description", meta.Description)
+}
+
 // Path implements apiv2.Builder.
 func (m *MockBuilder) Path(p string) mason.Builder {
 	panic("unimplemented")

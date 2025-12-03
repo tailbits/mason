@@ -6,17 +6,19 @@ import (
 )
 
 type Record struct {
-	Input         *mason.Model
-	Output        mason.Model
-	ID            string
-	Method        string
-	Path          string
-	Description   string
-	Summary       string
-	SuccessStatus int
-	Tags          []string
-	QueryParams   any
-	Extensions    map[string]interface{}
+	Input           *mason.Model
+	Output          mason.Model
+	ID              string
+	Method          string
+	Path            string
+	Description     string
+	Summary         string
+	SuccessStatus   int
+	Tags            []string
+	QueryParams     any
+	Extensions      map[string]interface{}
+	PathSummary     string
+	PathDescription string
 }
 
 func (r *Record) AddInputModel(m model.WithSchema) {

@@ -60,8 +60,9 @@ func NewGenerator(a *mason.API, opts ...openAPIOption) (*Generator, error) {
 	}
 
 	var records []Record
-	forEachCollectedRoute(a.Operations(), func(op mason.Operation) {
-		record := toRecord(op, config.tagsFn)
+	forEachCollectedRoute(a, func(group string, op mason.Operation) {
+		meta, _ := a.GroupMetadata(group)
+		record := toRecord(op, config.tagsFn, meta)
 		config.transformFn(&record)
 
 		if config.filterFn(record) {
@@ -77,22 +78,24 @@ func NewGenerator(a *mason.API, opts ...openAPIOption) (*Generator, error) {
 	}, nil
 }
 
-func forEachCollectedRoute(routes []mason.Operation, fn func(mason.Operation)) {
-	for _, route := range routes {
-		fn(route)
-	}
+func forEachCollectedRoute(api *mason.API, fn func(group string, op mason.Operation)) {
+	api.ForEachOperation(func(group string, op mason.Operation) {
+		fn(group, op)
+	})
 }
 
-func toRecord(op mason.Operation, tagsFn func(mason.Operation) []string) Record {
+func toRecord(op mason.Operation, tagsFn func(mason.Operation) []string, meta mason.GroupMetadata) Record {
 	record := Record{
-		ID:            op.OperationID,
-		Method:        op.Method,
-		Path:          op.Path,
-		Description:   op.Description,
-		Summary:       op.Summary,
-		Tags:          append(tagsFn(op), op.Tags...),
-		SuccessStatus: op.SuccessCode,
-		Extensions:    op.Extensions,
+		ID:              op.OperationID,
+		Method:          op.Method,
+		Path:            op.Path,
+		Description:     op.Description,
+		Summary:         op.Summary,
+		Tags:            append(tagsFn(op), op.Tags...),
+		SuccessStatus:   op.SuccessCode,
+		Extensions:      op.Extensions,
+		PathSummary:     meta.Summary,
+		PathDescription: meta.Description,
 	}
 
 	record.AddInputModel(op.Input)

@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/swaggest/openapi-go/openapi31"
 	"github.com/tailbits/mason"
 	"github.com/tailbits/mason/model"
 	"github.com/tailbits/mason/openapi"
@@ -272,6 +273,35 @@ func TestOpenAPIGen(t *testing.T) {
 
 			tc.expectedOutcome.Assert(t, schema, err)
 		})
+	}
+}
+
+func TestOpenAPIPathMetadata(t *testing.T) {
+	api := mason.NewAPI(mason.NewHTTPRuntime())
+	grp := api.NewRouteGroup("Foos")
+	grp.WithSummary("Foo summary").WithDescription("Foo description")
+	grp.Register(
+		mason.HandleGet(GetResourceB).
+			Path("/foos").
+			WithOpID("list_foos").
+			WithDesc("List foos"),
+	)
+
+	gen, err := openapi.NewGenerator(api)
+	assert.NilError(t, err)
+
+	schema, err := gen.Schema()
+	assert.NilError(t, err)
+
+	var spec openapi31.Spec
+	assert.NilError(t, json.Unmarshal(schema, &spec))
+
+	pathItem := spec.Paths.MapOfPathItemValues["/foos"]
+	if assert.Check(t, pathItem.Summary != nil) {
+		assert.Equal(t, "Foo summary", *pathItem.Summary)
+	}
+	if assert.Check(t, pathItem.Description != nil) {
+		assert.Equal(t, "Foo description", *pathItem.Description)
 	}
 }
 
