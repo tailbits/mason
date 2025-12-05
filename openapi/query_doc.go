@@ -17,7 +17,7 @@ type structDocKey struct {
 
 var queryParamDocCache sync.Map // map[structDocKey]map[string]string
 
-func queryParamDescriptions(t reflect.Type) map[string]string {
+func QueryParamDescriptions(t reflect.Type) map[string]string {
 	if t == nil {
 		return nil
 	}

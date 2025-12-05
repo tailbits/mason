@@ -147,7 +147,7 @@ func forEachQueryParam(queryParams any, f func(string, string, string, string)) 
 		return
 	}
 
-	descriptions := queryParamDescriptions(t)
+	descriptions := QueryParamDescriptions(t)
 	timeType := reflect.TypeOf(time.Time{})
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
