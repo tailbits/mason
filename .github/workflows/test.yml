@@ -22,6 +22,26 @@ jobs:
       - name: Go version
         run: go version
 
+      - name: Check formatting
+        run: |
+          files=$(gofmt -s -l .)
+          if [ -n "$files" ]; then
+            echo "The following files are not gofmt'ed:" >&2
+            echo "$files" >&2
+            echo "Run: gofmt -s -w ." >&2
+            exit 1
+          fi
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        continue-on-error: true
+        with:
+          # Use the latest stable golangci-lint; pin if you prefer.
+          version: latest
+          args: --timeout=5m
+
       - name: Run tests
         run: go test ./...
-

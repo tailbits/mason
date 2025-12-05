@@ -1,0 +1,16 @@
+run:
+  timeout: 5m
+
+linters:
+  enable:
+    - govet
+    - staticcheck
+    - errcheck
+    - gosimple
+    - ineffassign
+    - unused
+
+issues:
+  # You can tighten this as the codebase evolves.
+  exclude-use-default: false
+
