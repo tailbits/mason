@@ -12,7 +12,7 @@ func TestErrorsAreSorted(t *testing.T) {
 		{Message: "bbb"},
 		{Message: "aaa"},
 	}}
-	
+
 	// Sort and assert on message order only to avoid
 	// unexported fields in model.FieldError tripping equality.
 	model.SortErrors(&e)

@@ -8,14 +8,12 @@ import (
 	"github.com/swaggest/openapi-go/openapi31"
 )
 
-const prefix string = "v2"
 const version string = "2.0.0"
 
-var name string = "Example"
-var url string = "https://example.com"
-var email string = "hello@example.com"
-var serverDescription string = "Example API Base URL"
-var serverURL string = "https://api.example.com"
+var name = "Example"
+var url = "https://example.com"
+var email = "hello@example.com"
+var serverURL = "https://api.example.com"
 
 func (g *Generator) Schema() ([]byte, error) {
 	if err := g.ingest(g.records); err != nil {

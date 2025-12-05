@@ -65,7 +65,7 @@ func (a *API) registerOp(m Operation, group string) {
 	path := m.Path
 	method := m.Method
 
-	if grp, ok := (*&a.registry)[group]; ok {
+	if grp, ok := (a.registry)[group]; ok {
 		grp[toKey(method, path)] = m
 
 		return

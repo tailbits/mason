@@ -1,9 +1,5 @@
 package mason
 
-import (
-	"strings"
-)
-
 type Registry map[string]Resource
 
 func (a *API) Registry() Registry {
@@ -25,14 +21,6 @@ func (a *API) HasOperation(method string, path string) bool {
 
 func toKey(method string, path string) string {
 	return method + ":" + path
-}
-
-func fromKey(key string) (method string, path string) {
-	split := strings.Split(key, ":")
-	if len(split) != 2 {
-		return "", ""
-	}
-	return split[0], split[1]
 }
 
 // TaggedOps returns all models that have all the tags provided

@@ -484,3 +484,17 @@ The [sync](model/sync) package can check if the model's struct, schema, and exam
 As mentioned in the intro, Mason is in active development and usage at [MagicBell](https://www.magicbell.com?utm_source=github&utm_campaign=mason). In open-sourcing it, we want to give back to the incredible Go community, and also receive feedback, contributions, and ideas for improvements.
 
 Plesae create issues with your questions, and if you use Mason, we'd love to hear from you, too!
+
+## Development
+
+- Run the full local checks (format, vet, lint, tests):
+
+```
+bash scripts/check.sh
+```
+
+- Auto-fix formatting instead of failing on it:
+
+```
+FIX_FORMAT=1 bash scripts/check.sh
+```

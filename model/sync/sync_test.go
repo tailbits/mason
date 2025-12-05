@@ -87,12 +87,12 @@ var testCases = []TestCase{
 
 func TestSchemaSync(t *testing.T) {
 	for _, testCase := range testCases {
-			t.Run(testCase.Name, func(t *testing.T) {
-				api := mason.NewAPI(mason.NewHTTPRuntime())
-				validator, err := sync.New(api, &TestModel{})
-				if err != nil {
-					t.Fatalf("failed to create validator for %s: %v", "TestCase", err)
-				}
+		t.Run(testCase.Name, func(t *testing.T) {
+			api := mason.NewAPI(mason.NewHTTPRuntime())
+			validator, err := sync.New(api, &TestModel{})
+			if err != nil {
+				t.Fatalf("failed to create validator for %s: %v", "TestCase", err)
+			}
 
 			validator.Sch = &jsonschema.Schema{}
 			if err := json.Unmarshal(testCase.Sch, validator.Sch); err != nil {
