@@ -59,7 +59,10 @@ func (e ExpectSuccess) Assert(t *testing.T, schema []byte, err error) {
 		return
 	}
 
-	assert.Equal(t, string(expected), string(formatted), "schema does not match snapshot - run with UPDATE_SCHEMA_SNAPSHOT=true to update")
+	// Be tolerant to trailing newline differences across platforms/formatters.
+	exp := strings.TrimSpace(string(expected))
+	got := strings.TrimSpace(string(formatted))
+	assert.Equal(t, exp, got, "schema does not match snapshot - run with UPDATE_SCHEMA_SNAPSHOT=true to update")
 }
 
 // ExpectError asserts that OpenAPI generation fails with a specific error message

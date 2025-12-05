@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/swaggest/jsonschema-go"
+	"github.com/tailbits/mason"
 	"github.com/tailbits/mason/model"
 	"github.com/tailbits/mason/model/sync"
 )
@@ -85,13 +86,13 @@ var testCases = []TestCase{
 }
 
 func TestSchemaSync(t *testing.T) {
-
 	for _, testCase := range testCases {
-		t.Run(testCase.Name, func(t *testing.T) {
-			validator, err := sync.New(&TestModel{})
-			if err != nil {
-				t.Fatalf("failed to create validator for %s: %v", "TestCase", err)
-			}
+			t.Run(testCase.Name, func(t *testing.T) {
+				api := mason.NewAPI(mason.NewHTTPRuntime())
+				validator, err := sync.New(api, &TestModel{})
+				if err != nil {
+					t.Fatalf("failed to create validator for %s: %v", "TestCase", err)
+				}
 
 			validator.Sch = &jsonschema.Schema{}
 			if err := json.Unmarshal(testCase.Sch, validator.Sch); err != nil {

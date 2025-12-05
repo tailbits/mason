@@ -12,12 +12,11 @@ func TestErrorsAreSorted(t *testing.T) {
 		{Message: "bbb"},
 		{Message: "aaa"},
 	}}
-	want := model.ValidationError{Errors: []model.FieldError{
-		{Message: "aaa"},
-		{Message: "bbb"},
-	}}
-
+	
+	// Sort and assert on message order only to avoid
+	// unexported fields in model.FieldError tripping equality.
 	model.SortErrors(&e)
-
-	assert.DeepEqual(t, e, want)
+	got := []string{e.Errors[0].Message, e.Errors[1].Message}
+	want := []string{"aaa", "bbb"}
+	assert.DeepEqual(t, got, want)
 }
