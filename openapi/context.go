@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"time"
 
 	"github.com/swaggest/jsonschema-go"
 	"github.com/swaggest/openapi-go"
@@ -40,8 +41,8 @@ func (c *ContextWrapper) from(record Record) error {
 		pathParams = append(pathParams, makeRequiredPathParam(param))
 	})
 
-	forEachQueryParam(record.QueryParams, func(name string, t string) {
-		pathParams = append(pathParams, makeOptionalQueryParam(name, t))
+	forEachQueryParam(record.QueryParams, func(name string, t string, format string, desc string) {
+		pathParams = append(pathParams, makeOptionalQueryParam(name, t, format, desc))
 	})
 
 	c.WithParameters(pathParams...)
@@ -136,7 +137,7 @@ func makeRequiredPathParam(param string) openapi31.ParameterOrReference {
 	}
 }
 
-func forEachQueryParam(queryParams any, f func(string, string)) {
+func forEachQueryParam(queryParams any, f func(string, string, string, string)) {
 	if queryParams == nil {
 		return
 	}
@@ -146,6 +147,8 @@ func forEachQueryParam(queryParams any, f func(string, string)) {
 		return
 	}
 
+	descriptions := queryParamDescriptions(t)
+	timeType := reflect.TypeOf(time.Time{})
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
 		tag := field.Tag.Get("json")
@@ -154,39 +157,71 @@ func forEachQueryParam(queryParams any, f func(string, string)) {
 			continue
 		}
 
+		desc := field.Tag.Get("doc")
+		if desc == "" {
+			desc = descriptions[field.Name]
+		}
 		switch field.Type.Kind() {
 		case reflect.String:
-			f(tag, "string")
+			f(tag, "string", "", desc)
 		case reflect.Int:
-			f(tag, "integer")
+			f(tag, "integer", "", desc)
 		case reflect.Bool:
-			f(tag, "boolean")
+			f(tag, "boolean", "", desc)
+		case reflect.Struct:
+			if field.Type == timeType {
+				f(tag, "string", "date-time", desc)
+			}
 		case reflect.Ptr:
 			switch field.Type.Elem().Kind() {
 			case reflect.String:
-				f(tag, "string")
+				f(tag, "string", "", desc)
 			case reflect.Int:
-				f(tag, "integer")
+				f(tag, "integer", "", desc)
 			case reflect.Bool:
-				f(tag, "boolean")
+				f(tag, "boolean", "", desc)
+			case reflect.Struct:
+				if field.Type.Elem() == timeType {
+					f(tag, "string", "date-time", desc)
+				}
 			}
 		}
 	}
 }
 
-func makeOptionalQueryParam(name string, t string) openapi31.ParameterOrReference {
+func makeOptionalQueryParam(name string, t string, format string, desc string) openapi31.ParameterOrReference {
 	req := false
-	s, err := jsonschema.SimpleType(t).ToSchemaOrBool().ToSimpleMap()
+	var schema jsonschema.Schema
+	if t != "" {
+		var jt jsonschema.Type
+		switch t {
+		case "string":
+			jt.WithSimpleTypes(jsonschema.String)
+		case "integer":
+			jt.WithSimpleTypes(jsonschema.Integer)
+		case "boolean":
+			jt.WithSimpleTypes(jsonschema.Boolean)
+		case "number":
+			jt.WithSimpleTypes(jsonschema.Number)
+		}
+		schema.WithType(jt)
+	}
+	if format != "" {
+		schema.Format = &format
+	}
+	s, err := schema.ToSchemaOrBool().ToSimpleMap()
 	if err != nil {
 		return openapi31.ParameterOrReference{}
 	}
 
-	return openapi31.ParameterOrReference{
-		Parameter: &openapi31.Parameter{
-			Name:     name,
-			In:       openapi31.ParameterInQuery,
-			Required: &req,
-			Schema:   s,
-		},
+	param := &openapi31.Parameter{
+		Name:     name,
+		In:       openapi31.ParameterInQuery,
+		Required: &req,
+		Schema:   s,
 	}
+	if desc != "" {
+		param.WithDescription(desc)
+	}
+	return openapi31.ParameterOrReference{Parameter: param}
 }

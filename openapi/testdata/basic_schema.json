@@ -27,6 +27,7 @@
           {
             "name": "id",
             "in": "query",
+            "description": "filters foos by identifier",
             "required": false,
             "schema": {
               "type": "string"
@@ -98,6 +99,7 @@
           {
             "name": "id",
             "in": "query",
+            "description": "filters foos by identifier",
             "required": false,
             "schema": {
               "type": "string"

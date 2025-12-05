@@ -303,6 +303,17 @@ func TestOpenAPIPathMetadata(t *testing.T) {
 	if assert.Check(t, pathItem.Description != nil) {
 		assert.Equal(t, "Foo description", *pathItem.Description)
 	}
+
+	// Also verify query param description extraction for this route
+	if assert.Check(t, pathItem.Get != nil) {
+		params := pathItem.Get.Parameters
+		if assert.Check(t, len(params) == 1) {
+			p := params[0].Parameter
+			if assert.Check(t, p != nil && p.Description != nil) {
+				assert.Equal(t, "filters foos by identifier", *p.Description)
+			}
+		}
+	}
 }
 
 // Helper function to format JSON
@@ -357,6 +368,7 @@ type TestQuery struct {
 }
 
 type TestParams struct {
+	// ID filters foos by identifier
 	ID string `json:"id"`
 }
 
