@@ -498,3 +498,12 @@ bash scripts/check.sh
 ```
 FIX_FORMAT=1 bash scripts/check.sh
 ```
+
+- Enable the pre-commit hook (runs the same checks automatically):
+
+```
+git config core.hooksPath .githooks
+chmod +x .githooks/pre-commit
+```
+
+Now every `git commit` runs `scripts/check.sh` with auto-formatting enabled.

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Run local checks before committing. Auto-fix format.
+export FIX_FORMAT=1
+
+if [[ -f "scripts/check.sh" ]]; then
+  bash scripts/check.sh
+else
+  echo "scripts/check.sh not found; skipping checks" >&2
+fi
